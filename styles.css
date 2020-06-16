@@ -19,24 +19,25 @@ header >h1 {
     font-size: 50px;
     font-family: asap, sans-serif;
 }
-.bord {
-    margin: 10px auto;
-    text-align: center;
-    border: 3px solid black;    
+.grid{
+    width: 200px;
+    height: 400px;
+    display: flex;
+    flex-wrap: wrap;
     background-color: white;
-    height: 600px;
-    width: 400px;
-    position: relative;
 }
-.score {
-    margin: 0;
-    text-align: center;
-    font-family: asap, sans-serif;
-    font-size: 90px;
+.grid div {
+    height: 20px;
+    width: 20px;
+}
 
+.vormpies {
+    background-color: blue;
 }
-.score-board {
-    text-align: center;
-    font-family: asap, sans-serif;
-    font-size: 90px;
-}   
+
+.vorm {
+    background-color: blue;
+}
+.tetromino {
+    background-color: blue;
+  }
