@@ -19,7 +19,12 @@ header >h1 {
     font-size: 50px;
     font-family: asap, sans-serif;
 }
+
+.container{
+    display: flex;
+}
 .grid{
+    margin-left: 40%;
     width: 200px;
     height: 400px;
     display: flex;
@@ -31,13 +36,20 @@ header >h1 {
     width: 20px;
 }
 
-.vormpies {
-    background-color: blue;
-}
-
 .vorm {
     background-color: blue;
 }
-.tetromino {
-    background-color: blue;
-  }
+
+.mini-grid{
+    margin-left: 40px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;
+}
+
+.mini-grid div {
+    height: 20px;
+    width: 20px;
+}
