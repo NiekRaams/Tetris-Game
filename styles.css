@@ -19,7 +19,28 @@ header >h1 {
     font-size: 50px;
     font-family: asap, sans-serif;
 }
+.h3{
+        font-size: 30px;
+        margin-left: 45%;
+    }
 
+#score{
+    font-size: 30px;
+    margin-left: 45%;
+}
+#start-button{
+    margin: 10px;
+    font-size:30px;
+    border-radius: 50%;  
+    background-color: #008080;
+    margin-left: 42%;
+    font-family: asap, sans-serif;
+    transition: all 0.3s ease;
+}
+#start-button:hover {
+    cursor: pointer;
+    background-color:white;
+}
 .container{
     display: flex;
 }

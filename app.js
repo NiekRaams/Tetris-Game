@@ -56,11 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
   let random = Math.floor(Math.random() * vormpies.length)
   let current = vormpies[random][currentRotation]
 
+  //drop the vormpies down every second
+  timerId = setInterval(moveDown, 1000)
+
 
   //draw the vorm 
   function draw() {
     current.forEach(index => {
       squares[currentPosition + index].classList.add('vorm')
+      squares[currentPosition + index].style.backgroundColor = colors[random]
     })
   }
 
@@ -68,11 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function undraw() {
     current.forEach(index => {
       squares[currentPosition + index].classList.remove('vorm')
+      squares[currentPosition + index].style.backgroundColor = ''
     })
   }
 
-  //drop the vormpies down every second
-  timerId = setInterval(moveDown, 1000)
 
   //assign functions to keyCodes
   function control(e) {
@@ -107,15 +110,15 @@ document.addEventListener('DOMContentLoaded', () => {
       currentPosition = 4
       draw()
       displayShape()
+      addScore()
+      gameOver()
     }
   }
   //move the vormpie to the left , unless there is an edge or blockage
   function moveLeft() {
     undraw()
     const leftEdge = current.some(index => (currentPosition + index) % width === 0)
-
     if (!leftEdge) currentPosition -= 1
-
     if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
       currentPosition += 1
     }
@@ -127,13 +130,36 @@ document.addEventListener('DOMContentLoaded', () => {
   function moveRight() {
     undraw()
     const rightEdge = current.some(index => (currentPosition + index) % width === width - 1)
-
     if (!rightEdge) currentPosition += 1
-
     if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
       currentPosition -= 1
     }
     draw()
+  }
+
+  ///FIX ROTATION OF THE VORMPIES A THE EDGE 
+  function isAtRight() {
+    return current.some(index => (currentPosition + index + 1) % width === 0)
+  }
+
+  function isAtLeft() {
+    return current.some(index => (currentPosition + index) % width === 0)
+  }
+
+  function checkRotatedPosition(P) {
+    P = P || currentPosition       //get current position.  Then, check if the piece is near the left side.
+    if ((P + 1) % width < 4) {         //add 1 because the position index can be 1 less than where the piece is (with how they are indexed).     
+      if (isAtRight()) {            //use actual position to check if it's flipped over to right side
+        currentPosition += 1    //if so, add one to wrap it back around
+        checkRotatedPosition(P) //check again.  Pass position from start, since long block might need to move more.
+      }
+    }
+    else if (P % width > 5) {
+      if (isAtLeft()) {
+        currentPosition -= 1
+        checkRotatedPosition(P)
+      }
+    }
   }
 
   //rotate the vormpies
@@ -144,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentRotation = 0
     }
     current = vormpies[random][currentRotation]
+    checkRotatedPosition()
     draw()
 
   }
@@ -164,15 +191,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //display the shape in the mini-grid display
   function displayShape() {
-    //remove any trace of a vorm from the entire grid 
+    //remove any trace of ('vorm form the entire grid
     displaySquares.forEach(square => {
       square.classList.remove('vorm')
-
+      square.style.backgroundColor = ''
     })
     upNextVormpies[nextRandom].forEach(index => {
       displaySquares[displayIndex + index].classList.add('vorm')
       displaySquares[displayIndex + index].style.backgroundColor = colors[nextRandom]
     })
+  }
+
+  //button function
+  StartBtn.addEventListener('click', () => {
+    if (timerId) {
+      clearInterval(timerId)
+      timerId = null
+    } else {
+      draw()
+      timerId = setInterval(moveDown, 1000)
+      nextRandom = Math.floor(Math.random() * vormpies.length)
+      displayShape()
+    }
+  })
+
+  //add score
+  function addScore() {
+    for (let i = 0; i < 199; i += width) {
+      const row = [i, i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7, i + 8, i + 9]
+
+      if (row.every(index => squares[index].classList.contains('taken'))) {
+        score += 10
+        ScoreDisplay.innerHTML = score
+        row.forEach(index => {
+          squares[index].classList.remove('taken')
+          squares[index].classList.remove('vorm')
+          squares[index].style.backgroundColor = ''
+        })
+        const squaresRemoved = squares.splice(i, width)
+        squares = squaresRemoved.concat(squares)
+        squares.forEach(cell => grid.appendChild(cell))
+      }
+    }
+  }
+
+  //game over
+  function gameOver() {
+    if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+      ScoreDisplay.innerHTML = 'end'
+      clearInterval(timerId)
+    }
   }
 
 })
